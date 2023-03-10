@@ -69,10 +69,6 @@ function makeMurkup(response) {
   galery.insertAdjacentHTML('beforeend', murkup);
 }
 
-function paginationOnSearch(response) {
-  pagination.total = response.data.totalHits;
-}
-
 async function OnLoadMore() {
   loadMoreButton.disabled = true;
 
@@ -90,21 +86,21 @@ async function OnLoadMore() {
 }
 
 async function fetchImgs(searchRequest) {
-  //   try {
-  const response = await axios(
-    `${URL}?${urlSearchParams}&q=${searchRequest}&page=${pagination.page}&per_page=${pagination.per_page}`
-  );
-
-  if (response.data.total === 0) {
-    throw new Error(
-      'Sorry, there are no images matching your search query. Please try again.'
+  try {
+    const response = await axios(
+      `${URL}?${urlSearchParams}&q=${searchRequest}&page=${pagination.page}&per_page=${pagination.per_page}`
     );
-    // }
 
-    paginationOnSearch(response);
+    if (response.data.total === 0) {
+      throw new Error(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+    }
+
+    pagination.total = response.data.totalHits;
 
     return makeMurkup(response.data.hits);
-    //   } catch (error) {
-    //     Notiflix.Notify.failure(error.message);
+  } catch (error) {
+    Notiflix.Notify.failure(error.message);
   }
 }
