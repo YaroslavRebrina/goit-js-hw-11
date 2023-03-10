@@ -1,0 +1,2 @@
+import './js/galery-client';
+
