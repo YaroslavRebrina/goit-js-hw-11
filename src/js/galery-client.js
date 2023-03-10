@@ -2,6 +2,7 @@ import { URL } from './galery-server';
 import { urlSearchParams } from './galery-server';
 import axios from 'axios';
 import Notiflix from 'notiflix';
+
 // { webformatURL, tags, likes, views, comments, downloads }
 const form = document.querySelector('#search-form');
 const galery = document.querySelector('.gallery');
@@ -30,9 +31,18 @@ async function onSubmit(event) {
 
 function makeMurkup(response) {
   const murkup = response
-    .map(({ webformatURL, tags, likes, views, comments, downloads }) => {
-      return `<div class="photo-card">
-  <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+    .map(
+      ({
+        largeImageURL,
+        webformatURL,
+        tags,
+        likes,
+        views,
+        comments,
+        downloads,
+      }) => {
+        return `<div class="photo-card">
+  <a href="${largeImageURL}"><img src="${webformatURL}" alt="${tags} title="${tags}" loading="lazy" /></a>
   <div class="info">
     <p class="info-item">
       <b>Likes</b>
@@ -52,14 +62,15 @@ function makeMurkup(response) {
     </p>
   </div>
 </div>`;
-    })
+      }
+    )
     .join('');
 
   galery.insertAdjacentHTML('beforeend', murkup);
 }
 
 function paginationOnSearch(response) {
-  total = response.data.totalHits;
+  pagination.total = response.data.totalHits;
 }
 
 async function OnLoadMore() {
@@ -74,6 +85,7 @@ async function OnLoadMore() {
   pagination.page += 1;
 
   await fetchImgs(searchRequest);
+
   loadMoreButton.disabled = false;
 }
 
@@ -90,6 +102,7 @@ async function fetchImgs(searchRequest) {
     }
 
     paginationOnSearch(response);
+
     return makeMurkup(response.data.hits);
   } catch (error) {
     Notiflix.Notify.failure(error.message);
