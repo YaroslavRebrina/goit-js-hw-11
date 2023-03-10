@@ -76,7 +76,7 @@ function paginationOnSearch(response) {
 async function OnLoadMore() {
   loadMoreButton.disabled = true;
 
-  if (pagination.page + 1 > pagination.totalHits / pagination.per_page) {
+  if (pagination.page + 1 > pagination.total / pagination.per_page) {
     Notiflix.Notify.warning(
       "We're sorry, but you've reached the end of search results."
     );
@@ -90,21 +90,21 @@ async function OnLoadMore() {
 }
 
 async function fetchImgs(searchRequest) {
-  try {
-    const response = await axios(
-      `${URL}?${urlSearchParams}&q=${searchRequest}&page=${pagination.page}&per_page=${pagination.per_page}`
-    );
+  //   try {
+  const response = await axios(
+    `${URL}?${urlSearchParams}&q=${searchRequest}&page=${pagination.page}&per_page=${pagination.per_page}`
+  );
 
-    if (response.data.total === 0) {
-      throw new Error(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-    }
+  if (response.data.total === 0) {
+    throw new Error(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+    // }
 
     paginationOnSearch(response);
 
     return makeMurkup(response.data.hits);
-  } catch (error) {
-    Notiflix.Notify.failure(error.message);
+    //   } catch (error) {
+    //     Notiflix.Notify.failure(error.message);
   }
 }
