@@ -69,10 +69,14 @@ function makeMurkup(response) {
   galery.insertAdjacentHTML('beforeend', murkup);
 }
 
+function paginationOnSearch(response) {
+  total = response.data.totalHits;
+}
+
 async function OnLoadMore() {
   loadMoreButton.disabled = true;
 
-  if (pagination.page + 1 > pagination.total / pagination.per_page) {
+  if (pagination.page + 1 > pagination.totalHits / pagination.per_page) {
     Notiflix.Notify.warning(
       "We're sorry, but you've reached the end of search results."
     );
@@ -97,7 +101,7 @@ async function fetchImgs(searchRequest) {
       );
     }
 
-    pagination.total = response.data.totalHits;
+    paginationOnSearch(response);
 
     return makeMurkup(response.data.hits);
   } catch (error) {
