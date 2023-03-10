@@ -70,7 +70,7 @@ function makeMurkup(response) {
 }
 
 function paginationOnSearch(response) {
-  total = response.data.totalHits;
+  pagination.total = response.data.totalHits;
 }
 
 async function OnLoadMore() {
