@@ -1,4 +1,3 @@
-import { API_KEY } from './galery-server';
 import { URL } from './galery-server';
 import { urlSearchParams } from './galery-server';
 import axios from 'axios';
@@ -15,20 +14,22 @@ const pagination = {
 };
 
 let searchRequest = null;
-
-const onSubmit = async event => {
-  galery.innerHTML = '';
-  event.preventDefault();
-  searchRequest = event.currentTarget.children.searchQuery.value;
-
-  fetchImgs(searchRequest);
-};
+loadMoreButton.classList.add('invisible');
 
 form.addEventListener('submit', onSubmit);
 loadMoreButton.addEventListener('click', OnLoadMore);
 
-function makeMurkup(hits) {
-  const murkup = hits
+async function onSubmit(event) {
+  galery.innerHTML = '';
+  event.preventDefault();
+  searchRequest = event.currentTarget.children.searchQuery.value;
+
+  await fetchImgs(searchRequest);
+  loadMoreButton.classList.remove('invisible');
+}
+
+function makeMurkup(response) {
+  const murkup = response
     .map(({ webformatURL, tags, likes, views, comments, downloads }) => {
       return `<div class="photo-card">
   <img src="${webformatURL}" alt="${tags}" loading="lazy" />
@@ -61,7 +62,9 @@ function paginationOnSearch(response) {
   total = response.data.totalHits;
 }
 
-function OnLoadMore() {
+async function OnLoadMore() {
+  loadMoreButton.disabled = true;
+
   if (pagination.page + 1 > pagination.totalHits / pagination.per_page) {
     Notiflix.Notify.warning(
       "We're sorry, but you've reached the end of search results."
@@ -70,7 +73,8 @@ function OnLoadMore() {
 
   pagination.page += 1;
 
-  fetchImgs(searchRequest);
+  await fetchImgs(searchRequest);
+  loadMoreButton.disabled = false;
 }
 
 async function fetchImgs(searchRequest) {
