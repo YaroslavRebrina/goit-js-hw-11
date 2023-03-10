@@ -69,10 +69,6 @@ function makeMurkup(response) {
   galery.insertAdjacentHTML('beforeend', murkup);
 }
 
-function paginationOnSearch(response) {
-  pagination.total = response.data.totalHits;
-}
-
 async function OnLoadMore() {
   loadMoreButton.disabled = true;
 
@@ -101,7 +97,7 @@ async function fetchImgs(searchRequest) {
       );
     }
 
-    paginationOnSearch(response);
+    pagination.total = response.data.totalHits;
 
     return makeMurkup(response.data.hits);
   } catch (error) {
