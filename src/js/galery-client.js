@@ -22,6 +22,7 @@ loadMoreButton.addEventListener('click', OnLoadMore);
 
 async function onSubmit(event) {
   galery.innerHTML = '';
+  pagination.page = 1;
   event.preventDefault();
   searchRequest = event.currentTarget.children.searchQuery.value;
 
@@ -73,6 +74,7 @@ async function OnLoadMore() {
   loadMoreButton.disabled = true;
 
   if (pagination.page + 1 > pagination.total / pagination.per_page) {
+    loadMoreButton.disabled = false;
     return Notiflix.Notify.warning(
       "We're sorry, but you've reached the end of search results."
     );
