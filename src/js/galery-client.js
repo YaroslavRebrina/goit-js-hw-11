@@ -24,10 +24,9 @@ async function onSubmit(event) {
   galery.innerHTML = '';
   pagination.page = 1;
   event.preventDefault();
-  searchRequest = event.currentTarget.children.searchQuery.value;
+  searchRequest = event.currentTarget.children.searchQuery.value.trim();
 
   await fetchImgs(searchRequest);
-  loadMoreButton.classList.remove('invisible');
 }
 
 function makeMurkup(response) {
@@ -100,6 +99,13 @@ async function fetchImgs(searchRequest) {
     }
 
     pagination.total = response.data.totalHits;
+
+    if (response.data.hits.length < 40) {
+      loadMoreButton.classList.add('invisible');
+      console.log(response.data.hits.length);
+    } else {
+      loadMoreButton.classList.remove('invisible');
+    }
 
     return makeMurkup(response.data.hits);
   } catch (error) {

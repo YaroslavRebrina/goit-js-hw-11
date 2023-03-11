@@ -7,3 +7,4 @@ export const urlSearchParams = new URLSearchParams({
   orientation: 'horizontal',
   safesearch: 'true',
 });
+
