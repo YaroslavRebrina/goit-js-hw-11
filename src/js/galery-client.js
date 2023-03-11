@@ -72,8 +72,8 @@ function makeMurkup(response) {
 async function OnLoadMore() {
   loadMoreButton.disabled = true;
 
-  if (pagination.page + 1 > pagination.totalHits / pagination.per_page) {
-    Notiflix.Notify.warning(
+  if (pagination.page + 1 > pagination.total / pagination.per_page) {
+    return Notiflix.Notify.warning(
       "We're sorry, but you've reached the end of search results."
     );
   }
