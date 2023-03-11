@@ -1,14 +1,12 @@
-import { URL } from './galery-server';
-import { urlSearchParams } from './galery-server';
-import axios from 'axios';
 import Notiflix from 'notiflix';
+import { fetchImgs } from './fetch-api';
 
 // { webformatURL, tags, likes, views, comments, downloads }
 const form = document.querySelector('#search-form');
 const galery = document.querySelector('.gallery');
-const loadMoreButton = document.querySelector('.load-more');
+export const loadMoreButton = document.querySelector('.load-more');
 
-const pagination = {
+export const pagination = {
   page: 1,
   per_page: 40,
   total: null,
@@ -24,12 +22,15 @@ async function onSubmit(event) {
   galery.innerHTML = '';
   pagination.page = 1;
   event.preventDefault();
-  searchRequest = event.currentTarget.children.searchQuery.value.trim();
-
-  await fetchImgs(searchRequest);
+  searchRequest = event.currentTarget.searchQuery.value.trim();
+  try {
+    await fetchImgs(searchRequest);
+  } catch (error) {
+    Notiflix.Notify.failure(error.message);
+  }
 }
 
-function makeMurkup(response) {
+export function makeMurkup(response) {
   const murkup = response
     .map(
       ({
@@ -80,35 +81,10 @@ async function OnLoadMore() {
   }
 
   pagination.page += 1;
-
-  await fetchImgs(searchRequest);
-
-  loadMoreButton.disabled = false;
-}
-
-async function fetchImgs(searchRequest) {
   try {
-    const response = await axios(
-      `${URL}?${urlSearchParams}&q=${searchRequest}&page=${pagination.page}&per_page=${pagination.per_page}`
-    );
-
-    if (response.data.total === 0) {
-      throw new Error(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-    }
-
-    pagination.total = response.data.totalHits;
-
-    if (response.data.hits.length < 40) {
-      loadMoreButton.classList.add('invisible');
-      console.log(response.data.hits.length);
-    } else {
-      loadMoreButton.classList.remove('invisible');
-    }
-
-    return makeMurkup(response.data.hits);
+    await fetchImgs(searchRequest);
   } catch (error) {
     Notiflix.Notify.failure(error.message);
   }
+  loadMoreButton.disabled = false;
 }
