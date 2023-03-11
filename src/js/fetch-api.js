@@ -8,27 +8,27 @@ import { makeMurkup } from './galery-client';
 
 export async function fetchImgs(searchRequest) {
   if (searchRequest === '') {
+    loadMoreButton.classList.add('invisible');
     return;
   }
-  
-    const response = await axios(
-      `${URL}?${urlSearchParams}&q=${searchRequest}&page=${pagination.page}&per_page=${pagination.per_page}`
+
+  const response = await axios(
+    `${URL}?${urlSearchParams}&q=${searchRequest}&page=${pagination.page}&per_page=${pagination.per_page}`
+  );
+
+  if (response.data.total === 0) {
+    throw new Error(
+      'Sorry, there are no images matching your search query. Please try again.'
     );
+  }
 
-    if (response.data.total === 0) {
-      throw new Error(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-    }
+  pagination.total = response.data.totalHits;
 
-    pagination.total = response.data.totalHits;
+  if (response.data.hits.length < 40 || response.data.hits === []) {
+    loadMoreButton.classList.add('invisible');
+  } else {
+    loadMoreButton.classList.remove('invisible');
+  }
 
-    if (response.data.hits.length < 40 || response.data.hits === []) {
-      loadMoreButton.classList.add('invisible');
-    } else {
-      loadMoreButton.classList.remove('invisible');
-    }
-
-    return makeMurkup(response.data.hits);
-
+  return makeMurkup(response.data.hits);
 }
